@@ -21,7 +21,11 @@ def finite_square_well(x, V0=50.0, a=1.0):
 def ground_state_wavefunction(potential_type, x, **kwargs):
     if potential_type == "infinite_well":
         L = kwargs.get("L", 1.0)
-        psi = np.where((x >= 0) & (x <= L), np.sqrt(2 / L) * np.sin(np.pi * x / L), 0)
+        psi = np.where(
+            (x >= 0) & (x <= L),
+            np.sqrt(2 / L) * np.sin(np.pi * x / L),
+            0,
+        )
     elif potential_type == "harmonic":
         m = kwargs.get("m", 1.0)
         omega = kwargs.get("omega", 1.0)
