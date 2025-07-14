@@ -67,7 +67,7 @@ jobs:
       - name: 🧪 Run Unit Tests
         run: |
           if [ -d "tests" ]; then
-            pytest tests/
+            python -m unittest discover -s src/tests -p "test_*.py"
           else
             echo "No tests found. Skipping."
           fi
