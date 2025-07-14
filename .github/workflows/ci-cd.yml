@@ -47,9 +47,22 @@ jobs:
 
       - name: 🔍 Lint Code
         run: |
-          black --check src/ notebooks/
-          isort --check-only src/ notebooks/
-          flake8 src/ notebooks/
+          if [ -d "src" ]; then
+            black --check src/
+            isort --check-only src/
+            flake8 src/
+          else
+            echo "⚠️ 'src/' folder not found. Skipping lint for src."
+          fi
+
+          if [ -d "notebooks" ]; then
+            black --check notebooks/
+            isort --check-only notebooks/
+            flake8 notebooks/
+          else
+            echo "⚠️ 'notebooks/' folder not found. Skipping lint for notebooks."
+          fi
+
 
       - name: 🧪 Run Unit Tests
         run: |
