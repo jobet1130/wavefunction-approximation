@@ -1,0 +1,99 @@
+name: 🧠 Wavefunction Approximation - CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '**'   
+  pull_request:
+    branches:
+      - '**'  
+
+jobs:
+  build:
+    name: 🛠 Build Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nbconvert nbformat pytest black isort flake8
+
+  test:
+    name: ✅ Lint & Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install Test Tools
+        run: |
+          pip install -r requirements.txt
+          pip install black isort flake8 pytest
+
+      - name: 🔍 Lint Code
+        run: |
+          black --check src/ notebooks/
+          isort --check-only src/ notebooks/
+          flake8 src/ notebooks/
+
+      - name: 🧪 Run Unit Tests
+        run: |
+          if [ -d "tests" ]; then
+            pytest tests/
+          else
+            echo "No tests found. Skipping."
+          fi
+
+      - name: 🧠 Execute Core Notebook
+        run: |
+          jupyter nbconvert --to notebook --execute notebooks/02_supervised_mlp_keras.ipynb --output executed_mlp.ipynb
+
+  deploy:
+    name: 🚀 Deploy Models
+    runs-on: ubuntu-latest
+    needs: test
+    if: |
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' ||
+       github.ref == 'refs/heads/dev' ||
+       github.ref == 'refs/heads/staging')
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install TensorFlow
+        run: |
+          pip install tensorflow
+
+      - name: 🚀 Simulate Deployment
+        run: |
+          mkdir -p deployment_output
+          echo "🚀 Environment: ${{ github.ref_name }}" > deployment_output/info.txt
+          echo "📦 Model Hash: $(git rev-parse HEAD)" >> deployment_output/info.txt
+          echo "🕒 Date: $(date)" >> deployment_output/info.txt
+
+      - name: 📤 Upload Deployment Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-${{ github.ref_name }}
+          path: deployment_output/
