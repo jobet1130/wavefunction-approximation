@@ -84,7 +84,7 @@ jobs:
           fi
 
   deploy:
-    nname: 🚀 Deploy Models
+    name: 🚀 Deploy Models
     runs-on: ubuntu-latest
     needs: test
     if: |
