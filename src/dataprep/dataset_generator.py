@@ -1,8 +1,9 @@
 import os
+
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from scipy.integrate import trapezoid
+from tqdm import tqdm
 
 
 def infinite_square_well(x, L=1.0):
