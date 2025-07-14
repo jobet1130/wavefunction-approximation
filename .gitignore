@@ -1,0 +1,75 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode project settings
+.vscode/
+
+# Mac and system files
+.DS_Store
+Thumbs.db
+
+# Logs and debug files
+*.log
+
+# Environment and dependency files
+.env
+.venv/
+venv/
+*.egg-info/
+
+# Virtual environments and IDE-specific
+.idea/
+*.swp
+
+# Data files
+data/processed/
+data/raw/*.npy
+data/raw/*.csv
+data/raw/*.json
+
+# Trained models
+models/**/*.keras
+models/**/*.h5
+models/**/*.pkl
+models/**/*.npz
+models/**/*.ckpt
+models/**/*.index
+models/**/*.weights.h5
+models/**/training_history.json
+models/**/energy_log.csv
+
+# TensorFlow checkpoints
+checkpoint
+*.ckpt
+*.ckpt.*
+
+# Saved model directories
+saved_model/
+*/saved_model/
+
+# Experiment logs
+*.tensorboard
+*.tfevents.*
+
+# IPython history
+.ipython/
+
+# Output from training runs
+*.out
+*.bak
+
+# Temporary and backup files
+*.tmp
+*.bak
+*.old
+*.orig
+
+# Optional: ignore shell scripts (if used only locally)
+# *.sh
