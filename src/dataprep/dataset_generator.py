@@ -61,7 +61,8 @@ def generate_wavefunction_dataset(
 
     records = []
 
-    for _ in tqdm(range(num_samples), desc=f"Generating {num_samples} samples"):
+    tqdm_desc = f"Generating {num_samples} samples"
+    for _ in tqdm(range(num_samples), desc=tqdm_desc):
         if potential == "harmonic":
             V = harmonic_oscillator(x, **kwargs)
         elif potential == "infinite_well":
