@@ -43,7 +43,7 @@ def generate_wavefunction_dataset(
     seed=42,
     output_dir="../../data/raw",
     filename="wavefunction_dataset.csv",
-    **kwargs
+    **kwargs,
 ):
     np.random.seed(seed)
     os.makedirs(output_dir, exist_ok=True)
@@ -91,5 +91,5 @@ if __name__ == "__main__":
         grid_points=128,
         noise=True,
         seed=42,
-        output_dir="../../data/raw"
+        output_dir="../../data/raw",
     )
