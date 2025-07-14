@@ -74,7 +74,14 @@ jobs:
 
       - name: 🧠 Execute Core Notebook
         run: |
-          jupyter nbconvert --to notebook --execute notebooks/02_supervised_mlp_keras.ipynb --output executed_mlp.ipynb
+          if compgen -G "notebooks/*.ipynb" > /dev/null; then
+            for nb in notebooks/*.ipynb; do
+              echo "🚀 Executing notebook: $nb"
+              jupyter nbconvert --to notebook --execute "$nb" --output "executed_$(basename "$nb")"
+            done
+          else
+            echo "⚠️ No notebooks found in notebooks/. Skipping execution."
+          fi
 
   deploy:
     name: 🚀 Deploy Models
