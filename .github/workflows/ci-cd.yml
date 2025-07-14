@@ -142,7 +142,7 @@ jobs:
 
       - name: 🗃 Archive Logs
         if: steps.check_model.outputs.found == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: model-${{ github.ref_name }}
           path: deployment_output/
