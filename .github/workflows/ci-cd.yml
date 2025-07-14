@@ -67,7 +67,7 @@ jobs:
       - name: 🧪 Run Unit Tests
         run: |
           if [ -d "tests" ]; then
-            pytest tests/
+            python -m unittest discover -s src/tests -p "test_*.py"
           else
             echo "No tests found. Skipping."
           fi
@@ -142,7 +142,7 @@ jobs:
 
       - name: 🗃 Archive Logs
         if: steps.check_model.outputs.found == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: model-${{ github.ref_name }}
           path: deployment_output/
