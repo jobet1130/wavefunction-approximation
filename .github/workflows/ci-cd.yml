@@ -47,26 +47,29 @@ jobs:
 
       - name: 🔍 Lint Code
         run: |
-          if [ -d "src" ]; then
-            black --check src/
-            isort --check-only src/
-            flake8 src/
-          else
-            echo "⚠️ 'src/' folder not found. Skipping lint for src."
-          fi
+          format_and_check() {
+            TARGET=$1
+            echo "🔍 Checking $TARGET..."
 
-          if [ -d "notebooks" ]; then
-            black --check notebooks/
-            isort --check-only notebooks/
-            flake8 notebooks/
-          else
-            echo "⚠️ 'notebooks/' folder not found. Skipping lint for notebooks."
-          fi
+            if [ -d "$TARGET" ]; then
+              black --check "$TARGET" || (echo "⚠️ Running black to fix formatting..."; black "$TARGET")
+              isort --check-only "$TARGET" || (echo "⚠️ Running isort to fix import order..."; isort "$TARGET")
+              flake8 "$TARGET"
+            else
+              echo "⚠️ '$TARGET/' folder not found. Skipping lint for $TARGET."
+            fi
+          }
 
+          format_and_check "src"
+          format_and_check "notebooks"
 
       - name: 🧪 Run Unit Tests
         run: |
+<<<<<<< HEAD
+          if [ -d "src/tests" ]; then
+=======
           if [ -d "tests" ]; then
+>>>>>>> 5c26df69f5a4292fe9c57e699417b171c27dfeef
             python -m unittest discover -s src/tests -p "test_*.py"
           else
             echo "No tests found. Skipping."
@@ -139,7 +142,6 @@ jobs:
           echo "🚀 Environment: ${{ github.ref_name }}" > deployment_output/info.txt
           echo "📦 Model Hash: $(git rev-parse HEAD)" >> deployment_output/info.txt
           echo "🕒 Date: $(date)" >> deployment_output/info.txt
-        shell: bash
 
       - name: 🗃 Archive Logs
         if: steps.check_model.outputs.found == 'true'
