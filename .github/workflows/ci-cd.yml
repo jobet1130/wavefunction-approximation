@@ -67,7 +67,7 @@ jobs:
       - name: 🧪 Run Unit Tests
         run: |
           if [ -d "tests" ]; then
-            pytest tests/
+            python -m unittest discover -s src/tests -p "test_*.py"
           else
             echo "No tests found. Skipping."
           fi
@@ -89,7 +89,7 @@ jobs:
     needs: test
     if: |
       github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' ||
+      (github.ref == 'refs/heads/master' ||
        github.ref == 'refs/heads/dev' ||
        github.ref == 'refs/heads/staging')
     steps:
@@ -114,6 +114,7 @@ jobs:
           else
             echo "⚠️ No model found in models/. Skipping deployment."
             echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 🚀 Upload to Hugging Face
         if: steps.check_model.outputs.found == 'true'
@@ -142,7 +143,7 @@ jobs:
 
       - name: 🗃 Archive Logs
         if: steps.check_model.outputs.found == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: model-${{ github.ref_name }}
           path: deployment_output/
