@@ -10,7 +10,10 @@ class TestWavefunctionDatasetGeneration(unittest.TestCase):
     def setUp(self):
         self.test_output_dir = "tests/tmp_data"
         self.test_filename = "test_wavefunction_dataset.csv"
-        self.csv_path = os.path.join(self.test_output_dir, self.test_filename)
+        self.csv_path = os.path.join(
+            self.test_output_dir,
+            self.test_filename
+        )
 
         # Ensure clean test environment
         if not os.path.exists(self.test_output_dir):

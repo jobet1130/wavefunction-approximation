@@ -21,35 +21,51 @@ class WavefunctionProcessor:
             raise FileNotFoundError(f"❌ Dataset not found at: {file_path}")
         return pd.read_csv(file_path)
 
-    def normalize(self, df: pd.DataFrame, columns: Tuple[str, str, str]) -> pd.DataFrame:
+    def normalize(
+        self,
+        df: pd.DataFrame,
+        columns: Tuple[str, str, str]
+    ) -> pd.DataFrame:
         if self.scaling is None:
             return df
         scaler_cls = MinMaxScaler if self.scaling == "minmax" else StandardScaler
         self.scaler = scaler_cls()
-        scaled = self.scaler.fit_transform(df[list(columns)])
+        scaled = self.scaler.fit_transform(
+            df[list(columns)]
+        )
         return pd.DataFrame(scaled, columns=columns)
 
     def reshape(
-        self, df: pd.DataFrame, columns: Tuple[str, str, str]
+        self,
+        df: pd.DataFrame,
+        columns: Tuple[str, str, str]
     ) -> np.ndarray:
         records_per_sample = self.grid_points
         grouped = df.groupby(df.index // records_per_sample)
-        samples = [group[list(columns)].to_numpy() for _, group in grouped]
+        samples = [
+            group[list(columns)].to_numpy()
+            for _, group in grouped
+        ]
         return np.stack(samples)
-
 
     def preprocess(
         self,
         file_path: str,
-        columns: Tuple[str, str, str] = ("x", "V(x)", "psi(x)")
+        columns: Tuple[str, str, str] = (
+            "x", "V(x)", "psi(x)"
+        )
     ) -> Tuple[np.ndarray, Union[MinMaxScaler, StandardScaler, None]]:
         df = self.load_dataset(file_path)
         df = self.normalize(df, columns)
         data = self.reshape(df, columns)
         return data, self.scaler
-    
+
+
 if __name__ == "__main__":
-    processor = WavefunctionProcessor(grid_points=128, scaling="minmax")
+    processor = WavefunctionProcessor(
+        grid_points=128,
+        scaling="minmax"
+    )
 
     data_path = "../../data/raw/wavefunction_dataset.csv"
     try:
@@ -60,4 +76,3 @@ if __name__ == "__main__":
             print(f"📊 Used scaler: {scaler.__class__.__name__}")
     except FileNotFoundError as e:
         print(e)
-
