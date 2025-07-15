@@ -47,27 +47,26 @@ jobs:
 
       - name: 🔍 Lint Code
         run: |
-          if [ -d "src" ]; then
-            black --check src/
-            isort --check-only src/
-            flake8 src/
-          else
-            echo "⚠️ 'src/' folder not found. Skipping lint for src."
-          fi
+          format_and_check() {
+            TARGET=$1
+            echo "🔍 Checking $TARGET..."
 
-          if [ -d "notebooks" ]; then
-            black --check notebooks/
-            isort --check-only notebooks/
-            flake8 notebooks/
-          else
-            echo "⚠️ 'notebooks/' folder not found. Skipping lint for notebooks."
-          fi
+            if [ -d "$TARGET" ]; then
+              black --check "$TARGET" || (echo "⚠️ Running black to fix formatting..."; black "$TARGET")
+              isort --check-only "$TARGET" || (echo "⚠️ Running isort to fix import order..."; isort "$TARGET")
+              flake8 "$TARGET"
+            else
+              echo "⚠️ '$TARGET/' folder not found. Skipping lint for $TARGET."
+            fi
+          }
 
+          format_and_check "src"
+          format_and_check "notebooks"
 
       - name: 🧪 Run Unit Tests
         run: |
-          if [ -d "tests" ]; then
-            pytest tests/
+          if [ -d "src/tests" ]; then
+            python -m unittest discover -s src/tests -p "test_*.py"
           else
             echo "No tests found. Skipping."
           fi
@@ -89,7 +88,7 @@ jobs:
     needs: test
     if: |
       github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' ||
+      (github.ref == 'refs/heads/master' ||
        github.ref == 'refs/heads/dev' ||
        github.ref == 'refs/heads/staging')
     steps:
@@ -114,6 +113,7 @@ jobs:
           else
             echo "⚠️ No model found in models/. Skipping deployment."
             echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 🚀 Upload to Hugging Face
         if: steps.check_model.outputs.found == 'true'
@@ -138,11 +138,10 @@ jobs:
           echo "🚀 Environment: ${{ github.ref_name }}" > deployment_output/info.txt
           echo "📦 Model Hash: $(git rev-parse HEAD)" >> deployment_output/info.txt
           echo "🕒 Date: $(date)" >> deployment_output/info.txt
-        shell: bash
 
       - name: 🗃 Archive Logs
         if: steps.check_model.outputs.found == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: model-${{ github.ref_name }}
           path: deployment_output/
