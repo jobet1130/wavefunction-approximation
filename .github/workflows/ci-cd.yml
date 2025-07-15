@@ -89,7 +89,7 @@ jobs:
     needs: test
     if: |
       github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' ||
+      (github.ref == 'refs/heads/master' ||
        github.ref == 'refs/heads/dev' ||
        github.ref == 'refs/heads/staging')
     steps:
@@ -114,6 +114,7 @@ jobs:
           else
             echo "⚠️ No model found in models/. Skipping deployment."
             echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 🚀 Upload to Hugging Face
         if: steps.check_model.outputs.found == 'true'
